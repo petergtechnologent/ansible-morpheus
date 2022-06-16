@@ -20,15 +20,15 @@
       ansible.windows.win_package:
         path: C:\Temp\SQL2019-SSEI-Eval.exe
         arguments:
-          - install
-          - SUPPRESSPRIVACYSTATEMENTNOTICE
-          - IACCEPTSQLSERVERLICENSETERMS
-          - IACCEPTPYTHONLICENSETERMS
-          - IACCEPTROPENLICENSETERMS
-          - FEATURES=SQL,Tools
-          - INDICATEPROGRESS
-          - QUIET
-          - SQLSVCACCOUNT=sa
-          - SQLSVCPASSWORD=PeterG
-          - SQLSVCSTARTUPTYPE=Automatic
+          - /install
+          - /SUPPRESSPRIVACYSTATEMENTNOTICE
+          - /IACCEPTSQLSERVERLICENSETERMS
+          - /IACCEPTPYTHONLICENSETERMS
+          - /IACCEPTROPENLICENSETERMS
+          - /FEATURES=SQL,Tools
+          - /INDICATEPROGRESS
+          - /QUIET
+          - /SQLSVCACCOUNT=sa
+          - /SQLSVCPASSWORD=PeterG
+          - /SQLSVCSTARTUPTYPE=Automatic
           
