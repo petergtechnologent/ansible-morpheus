@@ -14,11 +14,11 @@
     - name: "Place SQL Installer upon Remote"
       ansible.windows.win_copy:
         src: /tmp/SQL2019-SSEI-Eval.exe
-        dest: "C:\Temp"
+        dest: C:\Temp
         
    - name: "Ensure SQL Server is installed and configured"
      ansible.windows.win_package:
-       path: "C:\Temp\SQL2019-SSEI-Eval.exe"
+       path: C:\Temp\SQL2019-SSEI-Eval.exe
        arguments:
          - install
          - SUPPRESSPRIVACYSTATEMENTNOTICE
