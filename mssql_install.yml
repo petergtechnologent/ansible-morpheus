@@ -13,6 +13,7 @@
 
     - name: "Place SQL Installer upon Remote"
       ansible.windows.win_copy:
+        decrypt: no
         src: /var/sql2019.zip
         dest: C:\Temp
 
