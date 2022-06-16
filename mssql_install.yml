@@ -16,19 +16,19 @@
         src: /tmp/SQL2019-SSEI-Eval.exe
         dest: C:\Temp
         
-   - name: "Ensure SQL Server is installed and configured"
-     ansible.windows.win_package:
-       path: C:\Temp\SQL2019-SSEI-Eval.exe
-       arguments:
-         - install
-         - SUPPRESSPRIVACYSTATEMENTNOTICE
-         - IACCEPTSQLSERVERLICENSETERMS
-         - IACCEPTPYTHONLICENSETERMS
-         - IACCEPTROPENLICENSETERMS
-         - FEATURES=SQL,Tools
-         - INDICATEPROGRESS
-         - QUIET
-         - SQLSVCACCOUNT=sa
-         - SQLSVCPASSWORD=PeterG
-         - SQLSVCSTARTUPTYPE=Automatic
+    - name: "Ensure SQL Server is installed and configured"
+      ansible.windows.win_package:
+        path: C:\Temp\SQL2019-SSEI-Eval.exe
+        arguments:
+          - install
+          - SUPPRESSPRIVACYSTATEMENTNOTICE
+          - IACCEPTSQLSERVERLICENSETERMS
+          - IACCEPTPYTHONLICENSETERMS
+          - IACCEPTROPENLICENSETERMS
+          - FEATURES=SQL,Tools
+          - INDICATEPROGRESS
+          - QUIET
+          - SQLSVCACCOUNT=sa
+          - SQLSVCPASSWORD=PeterG
+          - SQLSVCSTARTUPTYPE=Automatic
           
