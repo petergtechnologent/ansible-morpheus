@@ -3,7 +3,6 @@
   tasks:
     - name: "Gather Facts for Morpheus host"
       delegate_to: localhost
-      become: yes
       setup:
       
     - name: "Download SQL"
