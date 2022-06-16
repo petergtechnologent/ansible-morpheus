@@ -1,25 +1,30 @@
 - name: "Define SQL Server Configuration"
   hosts: all
   tasks:
+    - name: "Gather Facts for Morpheus host"
+      delegate_to: localhost
+      become: yes
+      setup:
+      
     - name: "Download SQL"
-      connection: local
+      delegate_to: localhost
       get_url:
         url: "https://download.microsoft.com/download/4/8/6/486005eb-7aa8-4128-aac0-6569782b37b0/SQL2019-SSEI-Eval.exe"
         dest: /tmp/SQL2019-SSEI-Eval.exe
         
-    - name: "Ensure SQL Server is installed and configured"
-      ansible.windows.win_package:
-        path: "https://download.microsoft.com/download/4/8/6/486005eb-7aa8-4128-aac0-6569782b37b0/SQL2019-SSEI-Eval.exe"
-        arguments:
-          - install
-          - SUPPRESSPRIVACYSTATEMENTNOTICE
-          - IACCEPTSQLSERVERLICENSETERMS
-          - IACCEPTPYTHONLICENSETERMS
-          - IACCEPTROPENLICENSETERMS
-          - FEATURES=SQL,Tools
-          - INDICATEPROGRESS
-          - QUIET
-          - SQLSVCACCOUNT=sa
-          - SQLSVCPASSWORD=PeterG
-          - SQLSVCSTARTUPTYPE=Automatic
+#    - name: "Ensure SQL Server is installed and configured"
+#      ansible.windows.win_package:
+#        path: "https://download.microsoft.com/download/4/8/6/486005eb-7aa8-4128-aac0-6569782b37b0/SQL2019-SSEI-Eval.exe"
+#        arguments:
+#          - install
+#          - SUPPRESSPRIVACYSTATEMENTNOTICE
+#          - IACCEPTSQLSERVERLICENSETERMS
+#          - IACCEPTPYTHONLICENSETERMS
+#          - IACCEPTROPENLICENSETERMS
+#          - FEATURES=SQL,Tools
+#          - INDICATEPROGRESS
+#          - QUIET
+#          - SQLSVCACCOUNT=sa
+#          - SQLSVCPASSWORD=PeterG
+#          - SQLSVCSTARTUPTYPE=Automatic
           
