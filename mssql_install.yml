@@ -5,30 +5,35 @@
       delegate_to: localhost
       setup:
       
-    - name: "Download SQL"
-      delegate_to: localhost
-      get_url:
-        url: "https://cloudsaver-835256612697-billing-files.s3.amazonaws.com/SQLServer2019-x64-ENU.iso"
-        dest: /tmp/SQLServer2019-x64-ENU.iso
+#     - name: "Download SQL"
+#       delegate_to: localhost
+#       get_url:
+#         url: "https://cloudsaver-835256612697-billing-files.s3.amazonaws.com/SQLServer2019-x64-ENU.iso"
+#         dest: /tmp/SQLServer2019-x64-ENU.iso
 
-#     - name: "Place SQL Installer upon Remote"
-#       ansible.windows.win_copy:
-#         src: /tmp/SQL2019-SSEI-Eval.exe
-#         dest: C:\Temp
+    - name: "Place SQL Installer upon Remote"
+      ansible.windows.win_copy:
+        src: /var/sql2019.zip
+        dest: C:\Temp
+
+    - name: "Expand the SQL 2019 Archive"
+      community.windows.win_unzip:
+        src: C:\Temp\sql2019.zip
+        dest: C:\Temp
         
-#     - name: "Ensure SQL Server is installed and configured"
-#       ansible.windows.win_package:
-#         path: C:\Temp\SQL2019-SSEI-Eval.exe
-#         arguments:
-#           - /install
-#           - /SUPPRESSPRIVACYSTATEMENTNOTICE
-#           - /IACCEPTSQLSERVERLICENSETERMS
-#           - /IACCEPTPYTHONLICENSETERMS
-#           - /IACCEPTROPENLICENSETERMS
-#           - /FEATURES=SQL,Tools
-#           - /INDICATEPROGRESS
-#           - /QUIET
-#           - /SQLSVCACCOUNT=sa
-#           - /SQLSVCPASSWORD=PeterG
-#           - /SQLSVCSTARTUPTYPE=Automatic
+    - name: "Ensure SQL Server is installed and configured"
+      ansible.windows.win_package:
+        path: C:\Temp\sql2019\setup.exe
+        arguments:
+          - /install
+          - /SUPPRESSPRIVACYSTATEMENTNOTICE
+          - /IACCEPTSQLSERVERLICENSETERMS
+          - /IACCEPTPYTHONLICENSETERMS
+          - /IACCEPTROPENLICENSETERMS
+          - /FEATURES=SQL,Tools
+          - /INDICATEPROGRESS
+          - /QUIET
+          - /SQLSVCACCOUNT=sa
+          - /SQLSVCPASSWORD=PeterG
+          - /SQLSVCSTARTUPTYPE=Automatic
           
