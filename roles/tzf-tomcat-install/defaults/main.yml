@@ -1,0 +1,18 @@
+---
+
+local_temp_dir: "/tmp"
+target_temp_dir: "C:\\Temp"
+tomcat_home: "C:\\Temp\\apache-tomcat-{{ tomcat_latest_version }}"
+tomcat_major_version: "9"
+tomcat_package_name: "apache-tomcat-{{ tomcat_latest_version }}-windows-x64.zip"
+tomcat_download_url: "https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_latest_version }}/bin/{{ tomcat_package_name }}"
+tomcat_webapps_path: "{{ tomcat_home }}\\webapps"
+tomcat_key_path: "{{ tomcat_home }}\\keys"
+server_xml_path: "{{ tomcat_home }}\\conf\\server.xml"
+server_xml_template: server.xml.j2
+logging_properties_template: logging.properties.j2
+tomcat_listen_port: 443
+tomcat_java_home: /opt/java/jdk11-64
+tomcat_ssl_cert_path: /opt/certs
+global_web_xml_template: web.xml.j2
+tomcat_catalina_opts: "-Xms512M -Xmx1024M -server -XX:+UseParallelGC"

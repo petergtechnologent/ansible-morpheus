@@ -1,0 +1,125 @@
+---
+# This will simply pull the HTML from the web site where Tomcat distributes its versions
+- name: Obtain the list of versions from the Tomcat distribution page
+  connection: local
+  uri:
+    url: "https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_major_version }}"
+    return_content: yes
+  register: tomcat_web_response
+
+# Loop through the response from the task above to create a sanitized list of available versions
+# The 'when:' looks at each line as it loops through, looking for what appears to be a version string.
+# Tomcat versions are presented as e.g. 'v9.1.18'
+# If a line in the loop is found that matches what looks like a version string, we'll use regex_replace to snag just the version number, and add to our list
+- name: Parse the response to create a list of the versions offered
+  when: item is search('^.*v' + (tomcat_major_version | string) + '.[0-9]*.[0-9]*.*$') # Only try to add to list if the output line contains what looks like a version number
+  set_fact:
+    tomcat_available_versions: "{{ (tomcat_available_versions | default([])) + [item | regex_replace('^.*v(' + (tomcat_major_version | string) + '.[0-9]*.[0-9]*).*$', '\\1')] }}"
+  loop: "{{ tomcat_web_response.content.splitlines() }}"
+
+# Look through the list of available versions, and identify the latest one
+- name: Identify the latest version from the offerings
+  when: tomcat_latest_version | default('0') is version(item, '<')
+  set_fact:
+    tomcat_latest_version: "{{ item }}"
+  loop: "{{ tomcat_available_versions }}"
+
+- name: Look to see if we already are up-to-date
+  stat:
+    path: "{{ server_xml_path }}"
+  register: tomcat_install_status
+
+- name: "Obtain the current version of Tomcat"
+  when: not tomcat_install_status.stat.exists
+  connection: local
+  ansible.builtin.get_url:
+    src: "{{ tomcat_download_url }}"
+    dest: "{{ local_temp_dir }}"
+
+- name: "Place the Tomcat installer on the target system"
+  when: not tomcat_install_status.stat.exists
+  community.windows.win_copy:
+    src: "{{ local_temp_dir }}/{{ tomcat_package_name }}"
+    dest: "{{ target_temp_dir }}"
+
+- name: "Housekeep the temporary download file on the Morpheus controller"
+  ansible.builtin.file:
+    path: "{{ local_temp_dir }}/{{ tomcat_package_name }}"
+    state: absent
+
+- name: "Extract the Tomcat archive"
+  when: not tomcat_install_status.stat.exists
+  community.windows.win_unzip:
+    src: "{{ target_temp_dir }}\\{{ tomcat_package_name }}"
+    dest: "{{ tomcat_home }}"
+
+- name: "Housekeep the temporary download file on the target system"
+  ansible.builtin.file:
+    path: "{{ target_temp_dir }}\\{{ tomcat_package_name }}"
+    state: absent
+    
+# - name: Place the server.xml template
+#   template:
+#     src: "{{ server_xml_template }}"
+#     dest: "{{ tomcat_home }}/conf/server.xml"
+#   notify: restart_tomcat
+
+# - name: Place logging defaults
+#   template:
+#     src: "{{ logging_properties_template }}"
+#     dest: "{{ tomcat_home }}/conf/logging.properties"
+#   notify: restart_tomcat
+
+# - name: Place a web.xml with a custom 404 error code definition
+#   template:
+#     src: "{{ global_web_xml_template }}"
+#     dest: "{{ tomcat_home }}/conf/web.xml"
+#   notify: restart_tomcat
+
+# - name: Place a custom global 404 landing page
+#   become: yes
+#   template:
+#     src: 404.html.j2
+#     dest: "{{ tomcat_home }}/webapps/ROOT/404.html"
+
+# - name: Remove default pages, examples, and docs that fail security scanning
+#   become: yes
+#   file:
+#     path: "{{ item }}"
+#     state: absent
+#   loop:
+#     - "{{ tomcat_home }}/webapps/docs"
+#     - "{{ tomcat_home }}/webapps/examples"
+#     - "{{ tomcat_home }}/webapps/ROOT/index.jsp"
+
+# - name: Place a ROOT/index.html file with a redirect to our default webapp
+#   become: yes
+#   template:
+#     src: index.html.j2
+#     dest: "{{ tomcat_home }}/webapps/ROOT/index.html"
+
+# - name: Ensure any project-defined webapps are deployed
+#   when: tomcat_webapps is defined
+#   become: yes
+#   get_url:
+#     url: "{{ item }}"
+#     dest: "{{ tomcat_home }}/webapps/"
+#   loop: "{{ tomcat_webapps }}"
+#   notify: restart_tomcat
+
+# - name: Ensure systemd unit file (startup script) is in place
+#   become: yes
+#   template:
+#     src: tomcat.service.j2
+#     dest: /etc/systemd/system/tomcat.service
+#     owner: root
+#     group: root
+#     mode: "0644"
+#   notify: restart_tomcat
+
+# - name: Ensure Tomcat is started and set to start upon reboot
+#   become: yes
+#   service:
+#     name: tomcat
+#     state: started
+#     enabled: yes

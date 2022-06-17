@@ -1,0 +1,7 @@
+---
+- name: "Deploy Tomcat for Cost Estimator"
+  hosts: all
+  tasks:
+    - name: "Employ Tomcat Role"
+      include_role:
+        name: tzf-tomcat-install
