@@ -12,6 +12,7 @@
 # Tomcat versions are presented as e.g. 'v9.1.18'
 # If a line in the loop is found that matches what looks like a version string, we'll use regex_replace to snag just the version number, and add to our list
 - name: Parse the response to create a list of the versions offered
+  connection: local
   when: item is search('^.*v' + (tomcat_major_version | string) + '.[0-9]*.[0-9]*.*$') # Only try to add to list if the output line contains what looks like a version number
   set_fact:
     tomcat_available_versions: "{{ (tomcat_available_versions | default([])) + [item | regex_replace('^.*v(' + (tomcat_major_version | string) + '.[0-9]*.[0-9]*).*$', '\\1')] }}"
@@ -20,6 +21,7 @@
 # Look through the list of available versions, and identify the latest one
 - name: Identify the latest version from the offerings
   when: tomcat_latest_version | default('0') is version(item, '<')
+  connection: local
   set_fact:
     tomcat_latest_version: "{{ item }}"
   loop: "{{ tomcat_available_versions }}"
@@ -43,6 +45,7 @@
     dest: "{{ target_temp_dir }}"
 
 - name: "Housekeep the temporary download file on the Morpheus controller"
+  connection: local
   ansible.builtin.file:
     path: "{{ local_temp_dir }}/{{ tomcat_package_name }}"
     state: absent

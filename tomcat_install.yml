@@ -2,6 +2,10 @@
 - name: "Deploy Tomcat for Cost Estimator"
   hosts: all
   tasks:
+    - name: "Discover Python Interpreter for Morpheus Control Server"
+      delegate_to: localhost
+      setup:
+      
     - name: "Employ Tomcat Role"
       include_role:
         name: tzf-tomcat-install
