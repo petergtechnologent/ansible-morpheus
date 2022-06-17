@@ -38,7 +38,7 @@
 
 - name: "Place the Tomcat installer on the target system"
   when: not tomcat_install_status.stat.exists
-  community.windows.win_copy:
+  ansible.windows.win_copy:
     src: "{{ local_temp_dir }}/{{ tomcat_package_name }}"
     dest: "{{ target_temp_dir }}"
 
@@ -57,7 +57,7 @@
   ansible.builtin.file:
     path: "{{ target_temp_dir }}\\{{ tomcat_package_name }}"
     state: absent
-    
+
 # - name: Place the server.xml template
 #   template:
 #     src: "{{ server_xml_template }}"
