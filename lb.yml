@@ -1,0 +1,20 @@
+---
+- name: "Attach Apache instance[s] to the load balancer"
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: "Gather facts for Morpheus controller"
+      delegate_to: localhost
+      setup:
+    - name: "Define the AWS CLI credentials"
+      delegate_to: localhost
+      shell: "aws configure set {{ item.key }} {{ item.value }}"
+      loop:
+        - { key: "aws_access_key_id", value: "{{ lookup('cypher', 'secret=secret/aws-creds:access') }}" }
+        - { key: "aws_secret_access_key", value: "{{ lookup('cypher', 'secret=secret/aws-creds:secret') }}" }
+        - { key: "region", value: "{{ lookup('cypher', 'secret=secret/aws-creds:region') }}" }
+    - name: "Associate instances to LB"
+      delegate_to: localhost
+      shell: "aws elb register-instances-with-load-balancer --load-balancer-name {{ morpheus['customOptions']['apachelbname'] }} --instances {{ morpheus['customOptions']['apacheinstanceid'] }}"
+
+...
