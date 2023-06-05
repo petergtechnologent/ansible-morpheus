@@ -4,7 +4,6 @@
   hosts: localhost
   tasks:
     - name: Touch a file
-      become: yes
       ansible.builtin.file:
         path: /tmp/ansible-test
         state: touch
